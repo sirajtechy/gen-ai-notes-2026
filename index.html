@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gen AI Course - Complete Session Notes | Nooruddin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e2e8f0;line-height:1.7;min-height:100vh}
+.topbar{background:#0a0a0f;border-bottom:1px solid #1e2030;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.topbar-left{display:flex;align-items:center;gap:10px;font-size:.9em;color:#6b7280}
+.topbar-brand{display:flex;align-items:center;gap:8px;color:#a78bfa;font-weight:600;font-size:.95em}
+.topbar-actions{display:flex;gap:10px}
+.btn-sm{background:transparent;border:1px solid #2d3748;color:#a0aec0;padding:7px 16px;border-radius:8px;cursor:pointer;font-size:.85em;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-sm:hover{border-color:#a78bfa;color:#a78bfa}
+.btn-primary{background:#a78bfa;color:#0a0a0f;border-color:#a78bfa;font-weight:600}
+.btn-primary:hover{background:#9061f9;border-color:#9061f9;color:#fff}
+.layout{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 53px)}
+.sidebar{background:#0d0d17;border-right:1px solid #1e2030;padding:24px 0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:#2d3748;border-radius:4px}
+.sidebar-section{padding:0 16px 16px}
+.sidebar-section h4{font-size:.7em;color:#4b5563;text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:8px;padding:0 8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:.9em;color:#9ca3af;transition:all .2s;text-decoration:none;margin-bottom:2px}
+.nav-item:hover{background:#1a1a2e;color:#e2e8f0}
+.nav-item.active{background:#1e1a3a;color:#a78bfa;font-weight:500}
+.nav-item .icon{width:18px;text-align:center;font-size:.95em}
+.nav-item .badge{margin-left:auto;background:#1e2030;color:#6b7280;padding:2px 7px;border-radius:10px;font-size:.75em}
+.main{padding:40px 56px;max-width:900px}
+.hero{background:linear-gradient(135deg,#13111c 0%,#1a1030 100%);border:1px solid #2d2052;border-radius:16px;padding:40px;margin-bottom:32px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(167,139,250,.15) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#1e1a3a;color:#a78bfa;border:1px solid #2d2052;padding:5px 12px;border-radius:20px;font-size:.8em;font-weight:500}
+.hero h1{font-size:2.2em;font-weight:700;color:#f1f5f9;margin-bottom:12px;line-height:1.2}
+.hero h1 span{color:#a78bfa}
+.hero-meta{display:flex;flex-wrap:wrap;gap:16px;margin-top:20px}
+.meta-item{display:flex;align-items:center;gap:8px;font-size:.85em;color:#6b7280}
+.meta-item strong{color:#9ca3af}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.stat-card{background:#0d0d17;border:1px solid #1e2030;border-radius:10px;padding:16px;text-align:center}
+.stat-card .number{font-size:1.6em;font-weight:700;color:#a78bfa}
+.stat-card .label{font-size:.78em;color:#6b7280;margin-top:4px}
+.section{margin-bottom:48px}
+.section-divider{display:flex;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #1e2030}
+.section-icon{font-size:1.4em}
+.section-divider h2{font-size:1.35em;font-weight:700;color:#f1f5f9}
+.section-divider .time{margin-left:auto;font-size:.8em;color:#4b5563;background:#1a1a2e;padding:4px 12px;border-radius:20px}
+p{color:#9ca3af;font-size:.95em;margin-bottom:12px}
+strong{color:#c4b5fd}
+.card{background:#0d0d17;border:1px solid #1e2030;border-radius:12px;padding:20px 24px;margin:16px 0}
+.card.highlight{border-color:#2d2052;background:linear-gradient(135deg,#13111c,#1a1030)}
+.card.success{border-color:#065f46;background:#031c12}
+.card.warning{border-color:#78350f;background:#1c0f03}
+.card.danger{border-color:#7f1d1d;background:#1c0303}
+.card.info{border-color:#1e3a5f;background:#030e1c}
+.card h4{color:#e2e8f0;font-size:1em;margin-bottom:10px;font-weight:600}
+.card h3{color:#c4b5fd;font-size:1.1em;margin-bottom:12px;font-weight:600}
+.quote{border-left:3px solid #a78bfa;padding:16px 20px;margin:16px 0;color:#9ca3af;font-style:italic;background:#0d0d17;border-radius:0 8px 8px 0}
+.quote cite{display:block;margin-top:8px;color:#6b7280;font-style:normal;font-size:.85em}
+.dialogue{border-radius:12px;padding:16px 20px;margin:12px 0;position:relative}
+.dialogue.instructor{background:#0d1117;border:1px solid #1e3a5f;border-left:3px solid #3b82f6}
+.dialogue.student{background:#0d0d17;border:1px solid #2d2052;border-left:3px solid #a78bfa}
+.speaker{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85em;font-weight:700}
+.avatar.instructor{background:#1e3a5f;color:#60a5fa}
+.avatar.student{background:#2d2052;color:#a78bfa}
+.speaker-name{font-size:.9em;font-weight:600;color:#c4b5fd}
+.speaker-role{font-size:.75em;color:#4b5563}
+.dialogue-text{color:#9ca3af;font-size:.9em;line-height:1.7}
+.key-point{background:#0d0a1c;border:1px solid #2d2052;border-radius:12px;padding:20px;margin:16px 0}
+.key-point-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.key-point-header h4{color:#a78bfa;font-weight:600}
+.person-card{display:flex;align-items:flex-start;gap:16px;background:#0d0d17;border:1px solid #2d2052;border-radius:12px;padding:20px;margin:16px 0}
+.person-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#6366f1);display:flex;align-items:center;justify-content:center;font-size:1.2em;font-weight:700;color:#fff;flex-shrink:0}
+.person-info h3{color:#e2e8f0;font-size:1em;font-weight:700;margin-bottom:4px}
+.person-info .role{color:#a78bfa;font-size:.85em;margin-bottom:8px}
+.person-info p{font-size:.85em;margin:0}
+ul,ol{margin:12px 0 12px 24px;color:#9ca3af}
+li{margin:6px 0;font-size:.9em}
+li strong{color:#c4b5fd}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.875em}
+th{background:#0d0d17;color:#c4b5fd;padding:12px 14px;text-align:left;border-bottom:1px solid #2d2052;font-weight:600}
+td{padding:10px 14px;border-bottom:1px solid #1e2030;color:#9ca3af}
+tr:hover td{background:#0d0d17}
+.tag{display:inline-block;background:#1e1a3a;color:#a78bfa;border:1px solid #2d2052;padding:3px 10px;border-radius:12px;font-size:.78em;margin:3px 3px 3px 0}
+.timeline{position:relative;padding-left:28px;margin:16px 0}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,#a78bfa,#6366f1)}
+.timeline-item{position:relative;margin-bottom:24px}
+.timeline-item::before{content:'';position:absolute;left:-24px;top:5px;width:10px;height:10px;border-radius:50%;background:#a78bfa;border:2px solid #0a0a0f;box-shadow:0 0 0 2px #a78bfa}
+.timeline-year{display:inline-block;background:#1e1a3a;color:#a78bfa;border:1px solid #2d2052;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:700;margin-bottom:6px}
+.timeline-title{color:#e2e8f0;font-weight:600;font-size:.95em;margin-bottom:4px}
+.timeline-desc{color:#6b7280;font-size:.85em}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.comparison-card{background:#0d0d17;border:1px solid #1e2030;border-radius:12px;padding:20px}
+.comparison-card.old{border-top:2px solid #ef4444}
+.comparison-card.new{border-top:2px solid #22c55e}
+.comparison-card h4{font-size:.95em;margin-bottom:12px}
+.comparison-card.old h4{color:#ef4444}
+.comparison-card.new h4{color:#22c55e}
+.search-bar{background:#0d0d17;border:1px solid #2d2748;border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.search-bar input{background:transparent;border:none;outline:none;color:#e2e8f0;font-size:.9em;flex:1}
+.search-bar input::placeholder{color:#4b5563}
+code{background:#1a1a2e;color:#c4b5fd;padding:2px 8px;border-radius:4px;font-family:monospace;font-size:.9em}
+.filter-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.filter-tab{background:transparent;border:1px solid #2d2748;color:#6b7280;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:.85em;transition:all .2s}
+.filter-tab:hover{border-color:#a78bfa;color:#a78bfa}
+.filter-tab.active{background:#1e1a3a;border-color:#a78bfa;color:#a78bfa;font-weight:500}
+.footer{border-top:1px solid #1e2030;padding:32px 56px;color:#4b5563;font-size:.85em;display:flex;justify-content:space-between;align-items:center}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:none}.main{padding:24px 20px}.comparison-grid{grid-template-columns:1fr}}
+@media print{.topbar,.sidebar,.filter-tabs,.search-bar{display:none!important}.layout{grid-template-columns:1fr}.main{padding:0}}
+.fade-in{animation:fadeIn .4s ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<!-- TOPBAR -->
+<nav class="topbar">
+<div class="topbar-left">
+<div class="topbar-brand">🧠 Gen AI Notes</div>
+<span>·</span>
+<span>Transformer Architecture Session</span>
+</div>
+<div class="topbar-actions">
+<button class="btn-sm" onclick="window.print()">🖨️ Print</button>
+<a class="btn-sm btn-primary" href="#summary">📌 Key Points</a>
+</div>
+</nav>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+<div class="sidebar-section">
+<h4>Session Sections</h4>
+<a href="#hero" class="nav-item active"><span class="icon">🎬</span>Overview<span class="badge">5min</span></a>
+<a href="#intro" class="nav-item"><span class="icon">🚀</span>Introduction<span class="badge">10min</span></a>
+<a href="#historic" class="nav-item"><span class="icon">🌟</span>Historic Paper<span class="badge">15min</span></a>
+<a href="#nlp-history" class="nav-item"><span class="icon">📅</span>NLP Timeline<span class="badge">20min</span></a>
+<a href="#rnn" class="nav-item"><span class="icon">🔁</span>RNN Foundation<span class="badge">30min</span></a>
+<a href="#lstm" class="nav-item"><span class="icon">🧠</span>LSTM Deep Dive<span class="badge">45min</span></a>
+<a href="#gru" class="nav-item"><span class="icon">⚡</span>GRU Optimization<span class="badge">15min</span></a>
+<a href="#seq2seq" class="nav-item"><span class="icon">🔄</span>Seq2Seq<span class="badge">40min</span></a>
+<a href="#problems" class="nav-item"><span class="icon">⚠️</span>Seq2Seq Problems<span class="badge">25min</span></a>
+<a href="#transformer" class="nav-item"><span class="icon">✨</span>Transformer<span class="badge">50min</span></a>
+<a href="#attention" class="nav-item"><span class="icon">🎯</span>Attention Mechanism<span class="badge">60min</span></a>
+<a href="#embeddings" class="nav-item"><span class="icon">💡</span>Context Embeddings<span class="badge">30min</span></a>
+<a href="#qa" class="nav-item"><span class="icon">💬</span>Q&amp;A Session<span class="badge">30min</span></a>
+<a href="#summary" class="nav-item"><span class="icon">📋</span>Summary<span class="badge">15min</span></a>
+</div>
+<div class="sidebar-section">
+<h4>Topics</h4>
+<span class="tag">Transformers</span>
+<span class="tag">Attention</span>
+<span class="tag">LSTM</span>
+<span class="tag">RNN</span>
+<span class="tag">Seq2Seq</span>
+<span class="tag">NLP</span>
+<span class="tag">GPT</span>
+<span class="tag">LLM</span>
+</div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- SEARCH + FILTERS -->
+<div class="search-bar">🔍 <input type="text" id="searchInput" placeholder="Search session content..." onkeyup="filterContent()" /></div>
+<div class="filter-tabs">
+<button class="filter-tab active" onclick="filterTab(this,'all')">All Content</button>
+<button class="filter-tab" onclick="filterTab(this,'theory')">Theory</button>
+<button class="filter-tab" onclick="filterTab(this,'dialogue')">Q&amp;A</button>
+<button class="filter-tab" onclick="filterTab(this,'keypoint')">Key Points</button>
+<button class="filter-tab" onclick="filterTab(this,'example')">Examples</button>
+</div>
+
+<!-- HERO -->
+<div id="hero" class="hero fade-in">
+<div class="hero-eyebrow">
+<span class="badge">🎓 GEN AI BATCH 2026 · Inceptez</span>
+<span class="badge">📅 April 18, 2026</span>
+</div>
+<h1>🧠 Gen AI Course<br><span>Complete Session Notes</span></h1>
+<p style="color:#9ca3af;margin-top:12px;">Comprehensive notes from the 4-hour session on <strong>Transformer Architecture &amp; Attention Mechanism</strong> — the most important paper in modern AI history.</p>
+<div class="hero-meta">
+<div class="meta-item">🏛️ <strong>Mohamed Nooruddin</strong> · AWS Gen AI Data Scientist</div>
+<div class="meta-item">⏱️ <strong>4 Hours</strong> · Full Session</div>
+<div class="meta-item">📄 <strong>"Attention is All You Need"</strong> · 2017</div>
+</div>
+<div class="stat-grid">
+<div class="stat-card"><div class="number">8</div><div class="label">Core Sections</div></div>
+<div class="stat-card"><div class="number">4h</div><div class="label">Session Duration</div></div>
+<div class="stat-card"><div class="number">2017</div><div class="label">The Revolution</div></div>
+</div>
+</div>
