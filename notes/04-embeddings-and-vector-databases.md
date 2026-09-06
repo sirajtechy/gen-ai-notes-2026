@@ -1,17 +1,16 @@
 ---
 title: Embeddings & Vector Databases
-layout: default
+layout: note
+section: Building a RAG pipeline
 nav_order: 5
 permalink: /notes/04-embeddings-and-vector-databases
+summary: >-
+  HNSW and IVF explained through a city-search analogy, and a decision framework
+  for choosing between FAISS, Chroma, Pinecone and Milvus.
 ---
 
-# Embeddings & Vector Databases
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## FAISS: the analogy that made HNSW click
 
@@ -22,6 +21,25 @@ FAISS (Facebook AI Similarity Search) is a library, not a managed database, and 
 **IVF (Inverted File Index):** same city, but now it's organized into clusters (say, by neighborhood/country of origin). You first identify which *cluster* your query probably belongs to, then only search within that cluster's members. The depth knob here is `nprobe` — how many clusters you're willing to check. More clusters checked → better recall, slower query.
 
 Both algorithms encode the same fundamental trade-off: **search depth vs. latency vs. accuracy**, and tuning either `ef_search` or `nprobe` is how you dial that trade-off in production.
+
+```mermaid
+flowchart LR
+  subgraph HNSW["HNSW — hop through a graph"]
+    direction LR
+    q1["query"] --> a["node"] --> b["closer node"] --> c["closer still"] --> d["nearest<br/>neighbour"]
+  end
+  subgraph IVF["IVF — pick clusters, then search inside"]
+    direction TB
+    q2["query"] --> pick{"which<br/>clusters?"}
+    pick --> k1["cluster A ✓"]
+    pick --> k2["cluster B ✓"]
+    pick -. skipped .-> k3["cluster C"]
+    k1 --> hit["nearest neighbour"]
+    k2 --> hit
+  end
+```
+
+<span class="diagram-caption">`ef_search` = how many hops HNSW will take. `nprobe` = how many clusters IVF will open. Turn either up for recall, down for speed.</span>
 
 ## Vector database landscape as taught
 
@@ -35,10 +53,16 @@ Both algorithms encode the same fundamental trade-off: **search depth vs. latenc
 
 ### Decision framework given in class
 
-- **No cost tolerance, small scale, local dev:** FAISS or Chroma.
-- **Production, don't want to run infrastructure:** Pinecone (managed, serverless, cloud-agnostic).
-- **Production, latency-critical, cost is secondary:** Milvus.
-- **Already have a transactional database in your stack:** check whether it now supports vector search natively before adding a new system.
+```mermaid
+flowchart TB
+  S{"Already run a DB that<br/>speaks vectors?<br/>(pgvector, OpenSearch…)"}
+  S -- yes --> USE["Use it — skip the dedicated vector DB"]
+  S -- no --> P{"Production?"}
+  P -- "no / local dev" --> LOCAL["FAISS or Chroma"]
+  P -- yes --> L{"Latency-critical<br/>at large scale?"}
+  L -- "yes, cost secondary" --> MIL["Milvus"]
+  L -- "no, avoid ops burden" --> PIN["Pinecone<br/>(managed, serverless)"]
+```
 
 {: .interview }
 If asked "how would you choose a vector database," the strong answer isn't naming one — it's naming the axes (managed vs. self-hosted, latency requirements, existing infrastructure, cost model) and mapping them to the FAISS/Chroma/Pinecone/Milvus spectrum above.

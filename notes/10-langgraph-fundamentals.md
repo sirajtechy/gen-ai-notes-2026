@@ -1,17 +1,16 @@
 ---
 title: LangGraph Fundamentals
-layout: default
+layout: note
+section: Agents & LangGraph
 nav_order: 11
 permalink: /notes/10-langgraph-fundamentals
+summary: >-
+  State, node, edge and START/END; a joke-writer graph built from scratch; the
+  retrieve → rewrite → generate → give-up loop a plain chain simply can't express.
 ---
 
-# LangGraph Fundamentals
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## Why LangGraph, framed against what you already know
 
@@ -39,9 +38,12 @@ The instructor's own analogy for state, worth keeping because it lands for anyon
 
 The first hands-on build, deliberately trivial so the mechanics are visible without any domain complexity getting in the way:
 
-```
-generate_joke → (conditional: has punchline?) → END
-                                              ↘ improve_joke → polish_joke → END
+```mermaid
+flowchart LR
+  START((START)) --> GJ["generate_joke"]
+  GJ --> Q{"has a<br/>punchline?"}
+  Q -- yes --> END((END))
+  Q -- no --> IJ["improve_joke"] --> PJ["polish_joke"] --> END
 ```
 
 - **State** holds four fields: `topic`, `joke`, `improved_joke`, `final_joke`.
@@ -82,6 +84,16 @@ The string returned by the conditional function **must exactly match a node name
 ### The retrieve → rewrite → generate → give-up pattern
 
 A complete worked example, more developed than the toy joke graph, and worth understanding in full because it's the pattern most real RAG-agent hybrids end up using:
+
+```mermaid
+flowchart TB
+  START((START)) --> R["retrieve"]
+  R --> C{"after_retrieve<br/>(conditional edge)"}
+  C -- "answer found" --> G["generate"] --> END((END))
+  C -- "no answer, attempts ≤ 2" --> RW["rewrite the query"]
+  RW --> R
+  C -- "no answer, attempts > 2" --> GU["give_up → 'I don't know'"] --> END
+```
 
 - **State:** `query`, `context`, `answer`, `attempts` (an integer counter).
 - **`retrieve` node:** looks up context for the current query.

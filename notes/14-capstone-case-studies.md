@@ -1,17 +1,17 @@
 ---
 title: Capstone Case Studies
-layout: default
+layout: note
+section: Putting it together
 nav_order: 15
 permalink: /notes/14-capstone-case-studies
+summary: >-
+  Three real student builds with actual numbers and dead ends — the Amazon
+  Seller Support bot, a restaurant-manager orchestrator, and a Deep-Agent
+  résumé tailor — plus the incremental-reindex question everyone eventually hits.
 ---
 
-# Capstone Case Studies
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 The cohort split into nine groups, each building a RAG/agent product for a different industry domain (banking, airlines, e-commerce, healthcare, legal, tax/government, finance complaints, telecom, and more — assigned live in an oddly chaotic but genuinely functional group-formation session). This page collects the case studies with enough real detail — actual numbers, actual dead ends — to be useful as reference architectures, not just inspiration.
 
@@ -65,22 +65,18 @@ A LangGraph orchestrator for a restaurant manager, able to answer four categorie
 
 This is worth reproducing as a template, since it cleanly demonstrates several patterns from earlier pages combined into one real system:
 
-```
-                        ┌─────────────────────┐
-   User query  ──────▶  │   Orchestrator graph │
-                        └──────────┬───────────┘
-                                   │  (intent classification)
-        ┌──────────────┬──────────┼──────────────┬─────────────────┐
-        ▼              ▼          ▼              ▼                 ▼
-   ┌─────────┐   ┌───────────┐┌───────────┐ ┌───────────┐   ┌─────────────┐
-   │   RAG   │   │SQL (read) │ │SQL (write)│ │    MCP    │   │ Deep Agent  │
-   │  tool   │   │  agent    │ │  agent    │ │  (weather,│   │ (planning:  │
-   │ (docs)  │   │no HITL    │ │HITL gate  │ │  events)  │   │checks SQL + │
-   └─────────┘   └───────────┘ └─────┬─────┘ └───────────┘   │MCP, writes  │
-                                     │                        │a plan)     │
-                              [human approval]                └─────────────┘
-                              before insert/
-                              update/delete
+```mermaid
+flowchart TB
+  U["User query"] --> O["Orchestrator graph<br/>(intent classification)"]
+  O --> RAG["RAG tool<br/>PDF · PPTX · XLS docs"]
+  O --> SR["SQL agent — read<br/>no human gate"]
+  O --> SW["SQL agent — write"]
+  O --> MCP["MCP server/client<br/>weather · events"]
+  O --> DA["Deep Agent — planning<br/>checks SQL + MCP, writes a plan"]
+  SW --> HITL{"Human approval<br/>before insert / update / delete"}
+  HITL -- approved --> DB["Database mutation"]
+  DA -.uses.-> SR
+  DA -.uses.-> MCP
 ```
 
 **Two things worth noting about this diagram specifically:**

@@ -1,17 +1,16 @@
 ---
 title: Guardrails & Safety
-layout: default
+layout: note
+section: Production concerns
 nav_order: 9
 permalink: /notes/08-guardrails-and-safety
+summary: >-
+  Two layers of guardrail — deterministic pattern matching and a semantic
+  moderation call — why you buy rather than build them, and gating agent actions.
 ---
 
-# Guardrails & Safety
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## Why guardrails exist (the list given in class)
 
@@ -26,6 +25,17 @@ Asked directly "why do we even need a guardrail," the class brainstormed and lan
 That last one is easy to overlook but genuinely came up as a real business requirement: **"you should never respond to the competitor information, when the customer is asking for something like that."**
 
 ## Two layers of guardrail, and why you need both
+
+```mermaid
+flowchart TB
+  IN["Incoming request"] --> L1["Layer 1 — pattern middleware<br/>regex, no LLM call"]
+  L1 -- "PII match" --> ACT{"block · redact<br/>mask · hash"}
+  L1 -- "clean" --> L2["Layer 2 — moderation model<br/>scores intent categories"]
+  L2 -- "over threshold" --> STOP["Reject before the main LLM"]
+  L2 -- "under threshold" --> LLM["Main LLM call"]
+  LLM --> OUTG["Output guardrail<br/>(same two layers, in reverse)"]
+  OUTG --> USER["Response to user"]
+```
 
 ### Layer 1: Pattern-based (deterministic, no LLM call)
 

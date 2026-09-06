@@ -1,17 +1,16 @@
 ---
 title: Agents & Tool Calling
-layout: default
+layout: note
+section: Agents & LangGraph
 nav_order: 10
 permalink: /notes/09-agents-and-tool-calling
+summary: >-
+  A tool is just a described function; tools are stateless by design; and the
+  forward-only chain is exactly the limitation that motivates LangGraph.
 ---
 
-# Agents & Tool Calling
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## What a tool actually is
 
@@ -23,7 +22,24 @@ A student asked a genuinely good question: if I call a tool, then call it again,
 
 ## Chains vs. agents: the dividing line
 
-This distinction gets formalized more fully once LangGraph is introduced (see [LangGraph Fundamentals](10-langgraph-fundamentals)), but the seed of it appears here: a simple LLM-plus-tools setup (what the class built first, using LangChain) runs in a fixed forward direction — prompt to LLM is a pipeline, one step feeds the next, and there's no going back. A student asked directly: *"it's only forward, right? There's no [way back]?"* — and the honest answer at this stage was no, not with a simple chained agent. Adding branching, retries, and cycles (going back to an earlier step based on a later result) is exactly the capability gap that motivates LangGraph.
+This distinction gets formalized more fully once LangGraph is introduced (see [LangGraph Fundamentals](10-langgraph-fundamentals)), but the seed of it appears here: a simple LLM-plus-tools setup (what the class built first, using LangChain) runs in a fixed forward direction — prompt to LLM is a pipeline, one step feeds the next, and there's no going back.
+
+```mermaid
+flowchart LR
+  subgraph Chain["Chain — forward only"]
+    direction LR
+    p1["prompt"] --> s1["step 1"] --> s2["step 2"] --> o1["output"]
+  end
+  subgraph Agent["Agent — loop until done"]
+    direction LR
+    p2["prompt"] --> llm["LLM decides"]
+    llm -- "call a tool" --> tool["tool runs"]
+    tool -- "result back" --> llm
+    llm -- "no tool needed" --> o2["output"]
+  end
+```
+
+A student asked directly: *"it's only forward, right? There's no [way back]?"* — and the honest answer at this stage was no, not with a simple chained agent. Adding branching, retries, and cycles (going back to an earlier step based on a later result) is exactly the capability gap that motivates LangGraph.
 
 ## `create_react_agent`: automating the whole RAG-as-a-tool pattern
 

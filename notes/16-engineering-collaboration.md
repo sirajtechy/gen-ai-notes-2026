@@ -1,17 +1,16 @@
 ---
 title: Engineering Collaboration
-layout: default
+layout: note
+section: Putting it together
 nav_order: 17
 permalink: /notes/16-engineering-collaboration
+summary: >-
+  The fork → branch → PR → review → merge workflow the cohort practised on
+  group capstones, and how to use coding agents inside it without losing the plot.
 ---
 
-# Engineering Collaboration
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 When the cohort split into nine project groups, the instructor used the moment to teach a real production Git/GitHub workflow rather than just letting groups improvise — on the reasoning that **"how a repository is used in production to push code collaboratively"** is itself a skill worth deliberately practicing, not an assumed prerequisite.
 
@@ -22,6 +21,17 @@ When the cohort split into nine project groups, the instructor used the moment t
 3. **Every contributor works on their own branch**, named for themselves and/or the module they're building — never commits directly to `main`.
 4. **Push to that branch, then open a pull request.** The PR gets reviewed by the team before merging into the shared main branch.
 5. **The repository owner (or any designated reviewer) reviews and merges** — this is the checkpoint where mistakes get caught before they land in the shared codebase.
+
+```mermaid
+flowchart LR
+  F["Fork / clone<br/>the shared repo"] --> B["Create your own branch<br/>named for you or your module"]
+  B --> C["Commit locally"]
+  C --> P["Push the branch"]
+  P --> PR["Open a pull request"]
+  PR --> R{"Team review"}
+  R -- "changes requested" --> C
+  R -- approved --> M["Owner merges into main"]
+```
 
 The instructor demonstrated this live using his own public contribution to an unrelated open-source AWS repository as a worked example: forking, branching, opening a PR, and — from the maintainer's side — reviewing and merging it, which is exactly what made him "a contributor" on that project's GitHub history. The same mechanism (fork → branch → PR → review → merge) scales from a two-person side project to contributing to a major open-source repository; the group projects were treated as practice for the identical real-world skill.
 

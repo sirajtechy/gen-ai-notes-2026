@@ -1,17 +1,16 @@
 ---
 title: Multi-Agent Architectures
-layout: default
+layout: note
+section: Agents & LangGraph
 nav_order: 13
 permalink: /notes/12-multi-agent-architectures
+summary: >-
+  Five ways to wire agents together, when a graph should be nested inside
+  another graph, sub-agents vs skills, and splitting agents by risk not function.
 ---
 
-# Multi-Agent Architectures
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## One box, one agent
 
@@ -30,6 +29,33 @@ LangGraph itself documents (and the course walked through) five ways multiple ag
 | **Hierarchical** | Agents connect in layers — one agent connects to several, each of which connects to several more, information flowing down/up level by level | Fits naturally when the task itself has a tree-like decomposition |
 | **Supervisor-as-tools** | The supervisor treats each specialist agent *as if it were just another tool it can call* | A lightweight variant of supervisor — less explicit orchestration logic, more "just another function call" |
 | **Custom** | Anything else you design yourself | For cases the other four don't fit cleanly |
+
+```mermaid
+flowchart TB
+  subgraph NET["Network — any-to-any"]
+    direction LR
+    n1["A"] <--> n2["B"]
+    n2 <--> n3["C"]
+    n1 <--> n3
+  end
+  subgraph SUP["Supervisor — delegate & report back"]
+    direction TB
+    s0["Supervisor"] --> s1["Specialist 1"]
+    s0 --> s2["Specialist 2"]
+    s0 --> s3["Specialist 3"]
+    s1 --> s0
+    s2 --> s0
+    s3 --> s0
+  end
+  subgraph HIER["Hierarchical — layered"]
+    direction TB
+    h0["Top"] --> h1["Mid A"]
+    h0 --> h2["Mid B"]
+    h1 --> h3["Leaf"]
+    h1 --> h4["Leaf"]
+    h2 --> h5["Leaf"]
+  end
+```
 
 {: .note }
 **Supervisor** was described as the most commonly reached-for pattern in the course's own capstone builds — the orchestrator LangGraph in [Capstone Case Studies](14-capstone-case-studies) is a supervisor pattern: one top-level graph deciding which specialist (RAG, SQL agent, MCP tool, Deep Agent) to invoke per user intent.

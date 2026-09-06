@@ -1,17 +1,16 @@
 ---
 title: "Retrieval: Dense, Sparse & Hybrid"
-layout: default
+layout: note
+section: Building a RAG pipeline
 nav_order: 6
 permalink: /notes/05-retrieval-dense-sparse-hybrid
+summary: >-
+  The four named weaknesses of dense retrieval, how BM25 saturates term
+  frequency, and why production retrieval is always hybrid — fused with RRF.
 ---
 
-# Retrieval: Dense, Sparse & Hybrid
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## Why dense embeddings alone aren't enough
 
@@ -48,7 +47,19 @@ score(D, Q) = Σ IDF(qi) · [ f(qi, D) · (k1 + 1) ] / [ f(qi, D) + k1 · (1 −
 
 ## Hybrid retrieval and Reciprocal Rank Fusion
 
-**"It must be hybrid always in case of production"** is stated flatly, more than once, across sessions. The mechanism used to combine BM25 and dense rankings is **Reciprocal Rank Fusion (RRF)**:
+**"It must be hybrid always in case of production"** is stated flatly, more than once, across sessions. Run both retrievers, fuse their ranked lists, then re-rank the survivors:
+
+```mermaid
+flowchart TB
+  Q["User query"] --> D["Dense retriever<br/>(embeddings) — semantic match"]
+  Q --> B["BM25 retriever<br/>(sparse) — exact-token match"]
+  D --> F["Reciprocal Rank Fusion<br/>combine by rank position"]
+  B --> F
+  F --> RR["Re-ranker<br/>(cross-encoder / Cohere / FlashRank)<br/>score true relevance"]
+  RR --> TOPK["Top-k chunks → LLM"]
+```
+
+The mechanism used to combine BM25 and dense rankings is **Reciprocal Rank Fusion (RRF)**:
 
 ```
 score(doc) = Σ 1 / (k + rank_i(doc))

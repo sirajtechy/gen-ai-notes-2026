@@ -1,17 +1,16 @@
 ---
 title: LLM & Tooling Foundations
-layout: default
+layout: note
+section: Foundations
 nav_order: 3
 permalink: /notes/02-llm-foundations
+summary: >-
+  The three failure modes RAG is built to fix, why "burn more tokens" is a bad
+  metric, and the driving-directions analogy that runs through the whole course.
 ---
 
-# LLM & Tooling Foundations
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## The three problems RAG exists to solve
 
@@ -22,6 +21,18 @@ Before touching any RAG machinery, the course frames *why* it's needed at all. A
 3. **Private data invisibility** — the model was never trained on your organization's data and never will be, because you can't (and shouldn't) hand a foundation-model vendor your private documents to fine-tune on every time they change.
 
 The uncomfortable part is that all three failure modes *look* the same from the outside — confident, well-formatted prose — which is precisely the danger. RAG's job is to ground generation in retrieved, current, private context so the model answers from *evidence* rather than parametric memory.
+
+```mermaid
+flowchart TB
+  Q["User question about private<br/>or recent information"]
+  Q --> BASE["Base LLM<br/>(parametric memory only)"]
+  BASE --> F1["Hallucination"]
+  BASE --> F2["Knowledge cutoff"]
+  BASE --> F3["Private data invisible"]
+  Q --> RET["Retrieve grounding context<br/>current · private · cited"]
+  RET --> GEN["LLM answers from evidence"]
+  GEN --> OK["Grounded, checkable answer"]
+```
 
 {: .note }
 This is a useful framing to reuse when someone asks "why not just use a bigger model / fine-tune instead of RAG": fine-tuning doesn't fix knowledge cutoff (you'd have to retrain constantly) and doesn't solve the private-data problem any better (you still need governed access), it only shifts *where* the cost is paid.

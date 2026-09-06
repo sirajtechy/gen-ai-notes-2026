@@ -1,17 +1,17 @@
 ---
 title: LangGraph Patterns
-layout: default
+layout: note
+section: Agents & LangGraph
 nav_order: 12
 permalink: /notes/11-langgraph-patterns
+summary: >-
+  Three reusable graph shapes — cost-based model routing, the
+  writer–critic–reviser loop, and the full Medium-writer pipeline — and the one
+  primitive underneath all of them.
 ---
 
-# LangGraph Patterns
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 Building on [LangGraph Fundamentals](10-langgraph-fundamentals), this page covers three reusable patterns the course built hands-on, each solving a different real production problem: **cost**, **quality through iteration**, and **giving up gracefully**.
 
@@ -19,9 +19,12 @@ Building on [LangGraph Fundamentals](10-langgraph-fundamentals), this page cover
 
 The setup: not every question deserves the most expensive model. A classify-then-route graph:
 
-```
-START → classify → (conditional: simple or complex?) → simple_answer_node (cheap model)
-                                                       ↘ complex_answer_node (expensive model)
+```mermaid
+flowchart LR
+  START((START)) --> CL["classify<br/>(cheap LLM labels the task)"]
+  CL --> P{"simple or<br/>complex?"}
+  P -- simple --> SA["short_answer<br/>cheap / local model"] --> END((END))
+  P -- complex --> DA["detailed_answer<br/>frontier model"] --> END
 ```
 
 - **`classify` node:** an LLM call asks itself to label the incoming question as `simple` (a fact, a number, a one-shot answer — "2+2", "capital of France") or `complex` (comparison, trade-off, worked example, design/recommendation — "compare self-attention to recurrence for a 10,000-token document").
@@ -40,9 +43,14 @@ The instructor walked through illustrative per-model costs (not exact current pr
 
 A second graph structure, aimed at quality rather than cost, built around three nodes in a cycle:
 
-```
-writer → critic → (conditional: score ≥ threshold?) → END (publish)
-                                                      ↘ reviser → critic (loop)
+```mermaid
+flowchart LR
+  START((START)) --> W["writer<br/>first draft"]
+  W --> CR["critic<br/>score + specific feedback"]
+  CR --> Q{"score ≥ 7<br/>or revisions = 2?"}
+  Q -- yes --> PUB["publish"] --> END((END))
+  Q -- no --> RV["reviser<br/>draft + feedback"]
+  RV --> CR
 ```
 
 - **`writer`** produces a first draft (an article, a paragraph, whatever the task is).
@@ -54,6 +62,20 @@ writer → critic → (conditional: score ≥ threshold?) → END (publish)
 ## Pattern 3: The "Medium article writer" — a fuller production version of the loop
 
 A more elaborate version of the writer–critic loop, built as a live demo, worth its own entry because it adds several production-relevant refinements on top of the basic pattern:
+
+```mermaid
+flowchart TB
+  ING["Ingest source material<br/>notebooks · PNGs · READMEs · XLS"] --> PLAN["Plan against skill.md<br/>(Medium structure conventions)"]
+  PLAN --> LOOP["Review loop<br/>accuracy · structure · grounding<br/>≤ 10 iterations or no findings"]
+  LOOP --> STYLE["Style pass<br/>strip AI-writing tells"]
+  STYLE --> GROUND["Ground check<br/>re-verify after style edits"]
+  GROUND --> QUIZ["Generate a self-check quiz"]
+  QUIZ --> HUMAN{"Human gate"}
+  HUMAN -- "changes requested" --> LOOP
+  HUMAN -- approve --> PUBLISH["Publish"]
+```
+
+The stages, in order:
 
 1. **Ingestion:** consume source material of any format (notebooks, PNGs, READMEs, XLS) as input.
 2. **Planning:** a `skill.md` file encodes what a good Medium article's *structure* should look like (Medium has known conventions for what gets accepted/read well), and the plan step follows it.

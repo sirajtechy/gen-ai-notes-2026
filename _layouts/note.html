@@ -1,0 +1,68 @@
+---
+layout: default
+---
+{%- comment -%} Flatten the ordered reading list, then locate this page. {%- endcomment -%}
+{%- assign flat = "" | split: "" -%}
+{%- for section in site.data.notes -%}
+  {%- for item in section.items -%}
+    {%- assign flat = flat | push: item -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{%- assign here = page.url | remove: ".html" -%}
+{%- assign idx = -1 -%}
+{%- for item in flat -%}
+  {%- assign iu = item.url | remove: ".html" -%}
+  {%- if iu == here -%}{%- assign idx = forloop.index0 -%}{%- endif -%}
+{%- endfor -%}
+
+{%- assign total = flat | size -%}
+{%- assign previdx = idx | minus: 1 -%}
+{%- assign nextidx = idx | plus: 1 -%}
+{%- assign lastidx = total | minus: 1 -%}
+
+{%- assign words = content | number_of_words -%}
+{%- assign wpm = site.words_per_minute | default: 200 -%}
+{%- assign mins = words | divided_by: wpm | plus: 1 -%}
+
+<article class="page">
+  <div class="wrap">
+    <header class="post-header">
+      {%- if page.section -%}<p class="eyebrow">{{ page.section }}</p>{%- endif -%}
+      <h1 class="post-title">{{ page.title }}</h1>
+      {%- if page.summary -%}<p class="post-standfirst">{{ page.summary }}</p>{%- endif -%}
+      <div class="post-meta">
+        {%- if idx >= 0 -%}<span>Note {{ nextidx }} of {{ total }}</span>{%- endif -%}
+        <span>{{ mins }} min read</span>
+        <span><a href="{{ site.repo_url }}/blob/main/notes/{{ page.path | remove: 'notes/' }}" target="_blank" rel="noopener">Suggest an edit</a></span>
+      </div>
+    </header>
+
+    <div class="post-body">
+      {{ content }}
+    </div>
+
+    {%- if idx >= 0 -%}
+    <nav class="pager">
+      {%- if idx > 0 -%}
+        {%- assign prev = flat[previdx] -%}
+        <a class="prev" href="{{ prev.url | relative_url }}">
+          <span class="dir">&larr; Previous</span>
+          <span class="ttl">{{ prev.title }}</span>
+        </a>
+      {%- else -%}
+        <a class="prev empty" href="#">&nbsp;</a>
+      {%- endif -%}
+      {%- if idx < lastidx -%}
+        {%- assign next = flat[nextidx] -%}
+        <a class="next" href="{{ next.url | relative_url }}">
+          <span class="dir">Next &rarr;</span>
+          <span class="ttl">{{ next.title }}</span>
+        </a>
+      {%- else -%}
+        <a class="next empty" href="#">&nbsp;</a>
+      {%- endif -%}
+    </nav>
+    {%- endif -%}
+  </div>
+</article>

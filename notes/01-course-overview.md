@@ -1,18 +1,29 @@
 ---
 title: Course Overview
-layout: default
+layout: note
+section: Foundations
 nav_order: 2
-has_children: false
 permalink: /notes/01-course-overview
+summary: >-
+  How the cohort ran, the session-by-session timeline, and the one habit —
+  never a strategy without a justification — that everything else is built on.
 ---
 
-# Course Overview
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
 
----
+## The shape of the course
+
+These sixteen notes move through one long arc: from *why* a language model needs help, to a working retrieval pipeline, to evaluating that pipeline honestly, to wrapping it in memory and safety, and finally to orchestrating several agents into one system. Each block assumes the vocabulary of the block before it.
+
+```mermaid
+flowchart LR
+  A["Foundations<br/>01–02"] --> B["RAG pipeline<br/>03–06"]
+  B --> C["Production concerns<br/>07–08"]
+  C --> D["Agents & LangGraph<br/>09–12"]
+  D --> E["MCP & Deep Agents<br/>13"]
+  E --> F["Capstone & career<br/>14–16"]
+```
 
 ## The cohort
 

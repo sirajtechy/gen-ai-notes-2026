@@ -1,17 +1,16 @@
 ---
 title: RAG Evaluation with RAGAS
-layout: default
+layout: note
+section: Building a RAG pipeline
 nav_order: 7
 permalink: /notes/06-rag-evaluation-ragas
+summary: >-
+  Recall@k, MRR and NDCG worked through by hand, where golden datasets come
+  from, the RAGAS metric menu, and why you evaluate every stage, not just the end.
 ---
 
-# RAG Evaluation with RAGAS
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## Why you can't skip this
 
@@ -86,3 +85,14 @@ Re-ranking is a **second-pass model** — a cross-encoder, Cohere Rerank, or Fla
 ## Evaluate at every stage, not just the end
 
 A student asked directly: should evaluation happen once, at the end of the pipeline, or at each stage? The instructor's answer: **at each module** — parsing, chunking, embedding, retrieval, and re-ranking each get their own evaluation pass during development, so that when the end-to-end number is disappointing, you already know *which* stage to go fix instead of guessing.
+
+```mermaid
+flowchart LR
+  P["Parsing"] --> C["Chunking"] --> E["Embedding"] --> R["Retrieval"] --> RR["Re-ranking"] --> G["Generation"]
+  P -.-> pe(["structure preserved?"])
+  C -.-> ce(["coherent chunks?"])
+  E -.-> ee(["right model & dim?"])
+  R -.-> re(["Recall@k · MRR · NDCG"])
+  RR -.-> rre(["top result actually best?"])
+  G -.-> ge(["faithfulness · relevancy"])
+```

@@ -1,17 +1,16 @@
 ---
 title: MCP & Deep Agents
-layout: default
+layout: note
+section: Frontier tooling
 nav_order: 14
 permalink: /notes/13-mcp-and-deep-agents
+summary: >-
+  Why calling a REST endpoint is not MCP, what an "agent harness" adds over an
+  agent, and how skills beat system-prompt bloat by loading only on demand.
 ---
 
-# MCP & Deep Agents
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## What MCP actually requires (the correction worth remembering)
 
@@ -22,6 +21,17 @@ This is the single most important conceptual correction from the entire course o
 **The distinction that matters:** MCP isn't just "an agent calling an external API" — it specifically requires a **standing server** implementing the protocol, which a client then connects to. If a third party already exposes an MCP server (increasingly common as the ecosystem matures), you can call it directly. If they don't — as with a generic weather API — you build and deploy your own MCP server as a thin wrapper around that API, and *then* your agent's MCP client talks to that server. Calling the raw REST endpoint directly from your agent code, no matter how clean the code is, is not MCP.
 
 This distinction matters practically: an MCP server is a piece of infrastructure with its own deployment and uptime lifecycle, not just a Python function. Budget for that when planning an MCP-based integration.
+
+```mermaid
+flowchart TB
+  subgraph NOT["Not MCP"]
+    a1["Agent code"] -- "HTTP GET" --> a2["Weather REST API"]
+  end
+  subgraph IS["MCP"]
+    b1["Agent's MCP client"] -- "MCP protocol" --> b2["MCP server<br/>(always running)"]
+    b2 -- "wraps" --> b3["Weather REST API"]
+  end
+```
 
 ## MCP as "USB-C for AI tools" — the interoperability pitch
 
@@ -58,6 +68,15 @@ This is the most conceptually important idea in this section, and it's worth bui
 **The mechanism: `skills.md` files, referenced (not embedded) from `AGENTS.md`.** Rather than pasting every possible capability into the system prompt, you write a lightweight `skills.md` describing a specific capability in detail, store it as a file, and reference it by name from the main `AGENTS.md`/system prompt. The harness loads the actual skill content **progressively, on demand** — only when the current task genuinely needs it — rather than paying its token cost on every single call.
 
 **The worked example:** asked to *"deliver chicken biryani"*, the agent doesn't need (and doesn't load) the invoice-generation skill — that skill "stays closed." Asked instead *"can you give me an invoice"*, the agent *now* loads the invoice skill, follows its instructions, and generates one. Same agent, same base system prompt — the skill is only pulled in when actually relevant.
+
+```mermaid
+flowchart TB
+  SP["System prompt (every call)<br/>base knowledge + AGENTS.md<br/>lists skills by name only"]
+  SP --> T1["Task: 'deliver biryani'"]
+  T1 --> N1["no skill loaded"]
+  SP --> T2["Task: 'give me an invoice'"]
+  T2 --> L2["load invoice skills.md<br/>on demand"] --> ACT["follow it, generate invoice"]
+```
 
 ### Skills vs. tools vs. sub-agents — when to use which
 

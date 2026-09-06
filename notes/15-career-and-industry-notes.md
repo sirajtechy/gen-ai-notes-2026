@@ -1,17 +1,17 @@
 ---
 title: Career & Industry Notes
-layout: default
+layout: note
+section: Putting it together
 nav_order: 16
 permalink: /notes/15-career-and-industry-notes
+summary: >-
+  The "learn the city, not the arrow" argument, the clay-pot craftsman story,
+  and a Google engineer's Q&A on DORA metrics, accountability and what AI won't
+  make obsolete.
 ---
 
-# Career & Industry Notes
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 This page collects the non-technical (but genuinely high-value) parts of the course: the instructor's recurring arguments about *why* the deep, slow way of learning still matters in an AI-tool-saturated industry, and a guest Q&A with engineers describing how this actually plays out inside a large tech company.
 
@@ -53,6 +53,14 @@ The core observation: AI coding agents have made **lead time for change** (how f
 4. **MTTR (Mean Time to Recovery / Detect)** — how fast you notice and fix it when something breaks.
 
 His point in raising these here specifically: AI tooling is currently improving (1) and (2) while making (3) worse in many organizations — which is precisely why (4), and the observability/reliability discipline that supports it, matters *more*, not less, in an AI-accelerated engineering org.
+
+```mermaid
+flowchart LR
+  AI["AI coding agents"] --> LT["Lead time for change ↓ (better)"]
+  AI --> DF["Deployment frequency ↑ (better)"]
+  AI --> CF["Change failure rate ↑ (worse)<br/>less-reviewed volume"]
+  CF --> MTTR["so MTTR + observability<br/>matter more, not less"]
+```
 
 ### On accountability
 

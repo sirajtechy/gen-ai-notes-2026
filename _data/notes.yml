@@ -1,0 +1,68 @@
+# Ordered reading sequence — drives prev/next and the home-page map.
+# `part` groups pages into sections on the landing page.
+
+- part: Foundations
+  items:
+    - url: /notes/01-course-overview
+      title: Course Overview
+      desc: How the cohort ran, the timeline, and how to read these notes.
+    - url: /notes/02-llm-foundations
+      title: LLM &amp; Tooling Foundations
+      desc: Why RAG exists, token economics, and the "learn the city" principle.
+
+- part: Building a RAG pipeline
+  items:
+    - url: /notes/03-rag-ingestion-and-chunking
+      title: "RAG: Ingestion &amp; Chunking"
+      desc: The end-to-end pipeline, PDF parsers, and six chunking strategies.
+    - url: /notes/04-embeddings-and-vector-databases
+      title: Embeddings &amp; Vector Databases
+      desc: HNSW vs IVF, and choosing between FAISS, Chroma, Pinecone, Milvus.
+    - url: /notes/05-retrieval-dense-sparse-hybrid
+      title: "Retrieval: Dense, Sparse &amp; Hybrid"
+      desc: Why dense alone fails, BM25, SPLADE, and Reciprocal Rank Fusion.
+    - url: /notes/06-rag-evaluation-ragas
+      title: RAG Evaluation with RAGAS
+      desc: Recall@k, MRR, NDCG, golden datasets, and where re-ranking fits.
+
+- part: Production concerns
+  items:
+    - url: /notes/07-production-memory-architecture
+      title: Production Memory Architecture
+      desc: Checkpointers, thread IDs, summarization vs trimming, cross-session memory.
+    - url: /notes/08-guardrails-and-safety
+      title: Guardrails &amp; Safety
+      desc: Pattern-based and semantic guardrails, build-vs-buy, human-in-the-loop.
+
+- part: Agents &amp; LangGraph
+  items:
+    - url: /notes/09-agents-and-tool-calling
+      title: Agents &amp; Tool Calling
+      desc: What a tool really is, why tools are stateless, chains vs agents.
+    - url: /notes/10-langgraph-fundamentals
+      title: LangGraph Fundamentals
+      desc: State, node, edge, conditional edges, and a graph built from scratch.
+    - url: /notes/11-langgraph-patterns
+      title: LangGraph Patterns
+      desc: Cost-based routing, writer&ndash;critic&ndash;reviser loops, the Medium-writer pipeline.
+    - url: /notes/12-multi-agent-architectures
+      title: Multi-Agent Architectures
+      desc: Network, supervisor, hierarchical, nested graphs, and sub-agents.
+
+- part: Frontier tooling
+  items:
+    - url: /notes/13-mcp-and-deep-agents
+      title: MCP &amp; Deep Agents
+      desc: What MCP actually requires, agent harnesses, and skills vs tools.
+
+- part: Putting it together
+  items:
+    - url: /notes/14-capstone-case-studies
+      title: Capstone Case Studies
+      desc: Real student builds &mdash; every decision paired with the metric that drove it.
+    - url: /notes/15-career-and-industry-notes
+      title: Career &amp; Industry Notes
+      desc: The "learn the city" argument, DORA metrics, and a Google engineer's Q&amp;A.
+    - url: /notes/16-engineering-collaboration
+      title: Engineering Collaboration
+      desc: The Git/GitHub workflow the cohort used for group capstone projects.

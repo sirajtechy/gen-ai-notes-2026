@@ -1,24 +1,36 @@
 ---
 title: "RAG: Ingestion & Chunking"
-layout: default
+layout: note
+section: Building a RAG pipeline
 nav_order: 4
 permalink: /notes/03-rag-ingestion-and-chunking
+summary: >-
+  The end-to-end RAG skeleton, why a bad parser poisons everything downstream,
+  and six chunking strategies with the trade-off that picks each one.
 ---
 
-# RAG: Ingestion & Chunking
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 ## The pipeline, end to end
 
-Every RAG conversation in this course keeps coming back to the same four-stage skeleton, and it's worth having it fixed before going deep on any one stage:
+Every RAG conversation in this course keeps coming back to the same skeleton. Two halves: an **offline indexing** path you run once (or on updates), and an **online query** path that runs per request.
 
-```
-INGESTION → CHUNKING → EMBEDDING → STORAGE → (query time) RETRIEVAL → RE-RANKING → GENERATION
+```mermaid
+flowchart LR
+  subgraph Index["Indexing (offline)"]
+    direction LR
+    ING["Ingestion<br/>parse any format"] --> CHK["Chunking"]
+    CHK --> EMB["Embedding"]
+    EMB --> STO["Vector store<br/>+ metadata"]
+  end
+  subgraph Query["Query time (online)"]
+    direction LR
+    Q["User query"] --> RET["Retrieval"]
+    RET --> RR["Re-ranking"]
+    RR --> GEN["Generation"]
+  end
+  STO -.serves.-> RET
 ```
 
 The instructor's repeated warning: **everything downstream is interlinked, and a mistake early cascades**. If retrieval quality is poor, the fix might not be retrieval at all — it might be the chunking strategy, or even further back, a parsing library that silently mangled a table. Debug in that order: parsing → chunking → embedding → retrieval → re-ranking, not the reverse.
@@ -59,6 +71,17 @@ You can't send a whole document to an LLM per query — context-length limits an
 
 {: .note }
 Parent–child chunking was singled out as the production-grade sweet spot: do the similarity check on the small, precise child chunk, but pass the larger semantic parent to the LLM so it has enough surrounding context to actually answer well.
+
+```mermaid
+flowchart TB
+  DOC["Source document"] --> P1["Parent chunk<br/>(large, ~1 page)"]
+  P1 --> C1["child 1"]
+  P1 --> C2["child 2"]
+  P1 --> C3["child 3"]
+  QRY["Query embedding"] -. cosine match .-> C2
+  C2 -- "look up its parent" --> P1
+  P1 == "sent to the LLM" ==> GEN["Generation<br/>(rich context)"]
+```
 
 ## Step 3: Embeddings — decide once, live with it forever
 

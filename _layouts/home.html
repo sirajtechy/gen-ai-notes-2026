@@ -1,0 +1,36 @@
+---
+layout: default
+---
+<section class="home-hero">
+  <div class="wrap">
+    <h1>{{ page.hero_title | default: site.title }}</h1>
+    <p class="lede">{{ page.hero_lede }}</p>
+    <a class="cta" href="#course-map">Start reading &rarr;</a>
+  </div>
+</section>
+
+<section class="wrap home-body">
+  {{ content }}
+</section>
+
+<section class="home-section" id="course-map">
+  <div class="wrap">
+    <h2>The course, in reading order</h2>
+    <p class="sub">Sixteen notes, grouped into six parts. Each part builds on the vocabulary of the last.</p>
+
+    {%- assign counter = 0 -%}
+    {%- for section in site.data.notes -%}
+    <h3 style="font-family:var(--font-sans);font-size:0.98rem;letter-spacing:0.02em;margin:2.2rem 0 0.9rem;color:var(--text-soft);">{{ section.part }}</h3>
+    <div class="card-grid">
+      {%- for item in section.items -%}
+      {%- assign counter = counter | plus: 1 -%}
+      <a class="card" href="{{ item.url | relative_url }}">
+        <span class="num">{{ counter | prepend: '0' | slice: -2, 2 }}</span>
+        <span class="card-title">{{ item.title }}</span>
+        <span class="card-desc">{{ item.desc }}</span>
+      </a>
+      {%- endfor -%}
+    </div>
+    {%- endfor -%}
+  </div>
+</section>

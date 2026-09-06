@@ -1,17 +1,16 @@
 ---
 title: Production Memory Architecture
-layout: default
+layout: note
+section: Production concerns
 nav_order: 8
 permalink: /notes/07-production-memory-architecture
+summary: >-
+  Checkpointers vs thread IDs, why appending history forever gets expensive,
+  summarization vs trimming vs the hybrid, and remembering the user across sessions.
 ---
 
-# Production Memory Architecture
-{: .no_toc }
-
-1. TOC
+* TOC
 {:toc}
-
----
 
 This page reconstructs one of the densest single-session Q&As in the whole course — a long, genuinely excellent back-and-forth where students kept pushing on edge cases until the instructor's answers got concrete. It's presented here closer to that dialogue shape than a clean summary, because the *wrong turns* (why summarization isn't just "compress everything") are as instructive as the final answer.
 
@@ -50,6 +49,18 @@ Simpler and cheaper: once a message-count or token limit is hit, just **drop** e
 {: .important }
 **Even-vs-odd N matters for trimming.** If you keep an even number of recent messages, you get clean (question, answer) pairs. Keep an odd number and you'll cut off mid-pair — either an orphaned answer with no visible question, or a dangling question with no answer kept.
 
+```mermaid
+flowchart TB
+  H["Growing conversation history<br/>crosses the token threshold"]
+  H --> T["Trimming<br/>drop all but the last N messages"]
+  H --> S["Summarization<br/>LLM compresses the older turns"]
+  T --> TP["+ cheap, no extra call<br/>− anything dropped is gone for good"]
+  S --> SP["+ old context survives in compressed form<br/>− one extra LLM call every time it fires"]
+  T --> HY["Hybrid = summary of old turns<br/>+ last N raw messages verbatim"]
+  S --> HY
+  HY --> HYP["what production actually ships"]
+```
+
 ### Strategy 3 (the actual production answer): hybrid
 
 **Combine both.** Summarize the older history once a threshold is hit, *and* always keep the last N raw messages verbatim on top of that summary. This is what the class settled on as "the most used kind of way of putting it" in production — you get the cost savings of summarization for old context, plus the precision of raw recent turns for anything the user is actively discussing right now.
@@ -59,6 +70,21 @@ There is **no universally correct threshold.** The instructor was explicit: the 
 ## Cross-thread (long-term) memory: remembering the *user*, not just the session
 
 A thread ID captures one conversation. But real products (ChatGPT, Claude) clearly remember things about *you* across entirely separate sessions with different thread IDs — how? A separate memory layer, keyed by **user ID** rather than thread ID:
+
+```mermaid
+flowchart TB
+  subgraph U["User ID: alice"]
+    LT["Long-term memory store<br/>(facts as embeddings)<br/>role · preferences · past projects"]
+  end
+  subgraph TA["Thread abc — Monday"]
+    CA["checkpointer:<br/>this chat's messages"]
+  end
+  subgraph TB2["Thread xyz — Friday, brand new"]
+    CB["checkpointer:<br/>this chat's messages"]
+  end
+  LT -.injected into prompt.-> CA
+  LT -.injected into prompt.-> CB
+```
 
 - Facts about the user (name, role, interests, preferences, past projects) get written into a **personalized memory store**, saved as embeddings (not raw text) — the same embedding model already used for the RAG store.
 - This store is checked and injected into the prompt **regardless of which thread ID** the user is currently on — a user can open a brand-new conversation, with no shared history, and the agent still knows their favorite programming language because that fact lives at the user-ID level, not the thread-ID level.
